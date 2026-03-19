@@ -126,16 +126,17 @@ class App(tk.Tk):
             bd=0, relief="flat",
             bg=CARD_BG, fg=FG,
             insertbackground=FG,
+            highlightthickness=0,
         )
         self._entry.pack(fill="x", padx=10, pady=9)
         self._entry.bind("<Return>", lambda _: self._start_download())
+        self._entry.bind("<FocusIn>",  lambda e: (entry_frame.config(highlightbackground="#0071e3", highlightthickness=2), self._on_focus_in(e)))
+        self._entry.bind("<FocusOut>", lambda e: (entry_frame.config(highlightbackground=BORDER, highlightthickness=1), self._on_focus_out(e)))
 
         # Platzhaltertext
         self._placeholder = "https://www.youtube.com/watch?v=..."
         self._entry.insert(0, self._placeholder)
         self._entry.config(fg=MUTED)
-        self._entry.bind("<FocusIn>",  self._on_focus_in)
-        self._entry.bind("<FocusOut>", self._on_focus_out)
 
         # Einfügen-Button (klein, neben dem Feld)
         paste_btn = tk.Label(
@@ -145,19 +146,20 @@ class App(tk.Tk):
         paste_btn.place(relx=1.0, rely=0.5, anchor="e", x=-10)
         paste_btn.bind("<Button-1>", self._paste_url)
 
-        # Download-Button
-        self._btn = tk.Button(
-            self, text="Transcript herunterladen",
-            font=self._f_btn,
-            bg=BTN_BG, fg=BTN_FG,
-            activebackground=BTN_HOVER, activeforeground=BTN_FG,
-            relief="flat", bd=0,
-            cursor="hand2",
-            command=self._start_download,
+        # Download-Button (als Frame+Label für volle Farbkontrolle auf macOS)
+        self._btn_frame = tk.Frame(self, bg=BTN_BG, cursor="hand2")
+        self._btn_frame.pack(fill="x", padx=28, pady=(16, 0))
+        self._btn_lbl = tk.Label(
+            self._btn_frame, text="Transcript herunterladen",
+            font=self._f_btn, bg=BTN_BG, fg=BTN_FG,
+            cursor="hand2", pady=11,
         )
-        self._btn.pack(fill="x", padx=28, pady=(16, 0), ipady=11)
-        self._btn.bind("<Enter>", lambda _: self._btn.config(bg=BTN_HOVER))
-        self._btn.bind("<Leave>", lambda _: self._btn.config(bg=BTN_BG))
+        self._btn_lbl.pack(fill="x")
+        self._btn_enabled = True
+        for w in (self._btn_frame, self._btn_lbl):
+            w.bind("<Button-1>", lambda _: self._start_download() if self._btn_enabled else None)
+            w.bind("<Enter>", lambda _: self._set_btn_color(BTN_HOVER))
+            w.bind("<Leave>", lambda _: self._set_btn_color(BTN_BG))
 
         # Spinner / Status-Bereich
         self._status_frame = tk.Frame(self, bg=BG)
@@ -181,6 +183,16 @@ class App(tk.Tk):
         )
         folder_lbl.pack(anchor="w", padx=28, pady=(20, 0))
         folder_lbl.bind("<Button-1>", self._open_folder)
+
+    def _set_btn_color(self, color):
+        self._btn_frame.config(bg=color)
+        self._btn_lbl.config(bg=color)
+
+    def _set_btn_enabled(self, enabled: bool):
+        self._btn_enabled = enabled
+        color = "#e89090" if not enabled else BTN_BG
+        self._set_btn_color(color)
+        self._btn_lbl.config(fg="#ffffff")
 
     # ── Platzhalter ─────────────────────────────────────────────────────────────
     def _on_focus_in(self, _event):
@@ -218,7 +230,7 @@ class App(tk.Tk):
             self._set_status("error", "Ungültige YouTube-URL. Bitte überprüfe den Link.")
             return
 
-        self._btn.config(state="disabled")
+        self._set_btn_enabled(False)
         self._set_status("loading", "Transcript wird geladen …")
         threading.Thread(target=self._download, args=(video_id,), daemon=True).start()
 
@@ -228,21 +240,21 @@ class App(tk.Tk):
         except TranscriptsDisabled:
             self.after(0, self._set_status, "error",
                        "Für dieses Video sind Untertitel deaktiviert.")
-            self.after(0, self._btn.config, {"state": "normal"})
+            self.after(0, self._set_btn_enabled, True)
             return
         except NoTranscriptFound:
             self.after(0, self._set_status, "error",
                        "Kein Transcript für dieses Video gefunden.")
-            self.after(0, self._btn.config, {"state": "normal"})
+            self.after(0, self._set_btn_enabled, True)
             return
         except (RequestBlocked, IpBlocked):
             self.after(0, self._set_status, "error",
                        "YouTube blockiert die Anfrage. Bitte Internetverbindung prüfen.")
-            self.after(0, self._btn.config, {"state": "normal"})
+            self.after(0, self._set_btn_enabled, True)
             return
         except Exception as e:
             self.after(0, self._set_status, "error", f"Fehler: {e}")
-            self.after(0, self._btn.config, {"state": "normal"})
+            self.after(0, self._set_btn_enabled, True)
             return
 
         filename = f"transcript_{video_id}_{lang}.txt"
@@ -257,7 +269,7 @@ class App(tk.Tk):
 
         self.after(0, self._set_status, "ok",
                    f"Gespeichert: {filename}")
-        self.after(0, self._btn.config, {"state": "normal"})
+        self.after(0, self._set_btn_enabled, True)
         # Ordner automatisch im Finder öffnen
         import subprocess
         self.after(0, lambda: subprocess.Popen(["open", "-R", filepath]))
