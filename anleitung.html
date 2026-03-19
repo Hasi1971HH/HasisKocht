@@ -2,11 +2,11 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Anleitung: Rezept Transcripts — Mac App</title>
+  <title>Rezept Transcripts — Anleitung</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      max-width: 720px;
+      max-width: 740px;
       margin: 60px auto;
       padding: 0 2rem;
       color: #222;
@@ -17,7 +17,7 @@
     .subtitle { color: #666; margin-bottom: 2.5rem; font-size: 0.95rem; }
 
     h2 {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       margin-top: 2rem;
       margin-bottom: 0.5rem;
       background: #f5f5f5;
@@ -43,7 +43,6 @@
       padding: 1rem 1.25rem;
       margin: 0.75rem 0;
     }
-
     .step-block code {
       display: block;
       font-size: 1rem;
@@ -53,7 +52,7 @@
       padding: 0;
     }
 
-    .hint { font-size: 0.85rem; color: #888; margin-top: 0.3rem; }
+    .hint { font-size: 0.85rem; color: #888; margin-top: 0.4rem; }
 
     .box-green {
       background: #f0fff4;
@@ -75,21 +74,34 @@
     }
     .box-yellow strong { color: #996600; }
 
+    .box-blue {
+      background: #ebf8ff;
+      border: 1px solid #63b3ed;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .box-blue strong { color: #2b6cb0; }
+
     .badge {
       display: inline-block;
       background: #cc0000;
       color: white;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       padding: 0.1rem 0.5rem;
       border-radius: 999px;
       margin-left: 0.5rem;
       vertical-align: middle;
     }
+    .badge-blue {
+      background: #3182ce;
+    }
 
     hr { border: none; border-top: 1px solid #e0e0e0; margin: 2.5rem 0; }
 
     .section-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: bold;
       letter-spacing: 0.08em;
       color: #aaa;
@@ -97,6 +109,20 @@
       margin-top: 2.5rem;
       margin-bottom: 0.25rem;
     }
+
+    .audience-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #1d1d1f;
+      color: white;
+      padding: 0.7rem 1.1rem;
+      border-radius: 8px;
+      margin: 2rem 0 0.5rem 0;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .audience-header span { font-size: 1.4rem; }
 
     footer { font-size: 0.8rem; color: #aaa; margin-top: 3rem; }
 
@@ -106,124 +132,107 @@
 <body>
 
   <h1>Rezept Transcripts</h1>
-  <p class="subtitle">Mac App — Einrichtungs-Anleitung &mdash; einmalig, ca. 15 Minuten</p>
+  <p class="subtitle">YouTube-Transcripts als Textdatei — selbst-enthaltene Mac App</p>
 
   <div class="box-green">
-    <strong>Gute Nachricht:</strong> Nach der Einrichtung reicht ein Doppelklick auf das App-Symbol — kein Terminal, kein Browser, nichts weiter.
+    <strong>So funktioniert die Verteilung:</strong><br>
+    Du baust die App <strong>einmal</strong> auf deinem Mac (Schritt 1–4 unten).<br>
+    Deine Frau bekommt eine <strong>ZIP-Datei</strong> — kein Python, kein Terminal, nichts weiter.
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════
-       WELCHE APP? — Auswahl
+       FÜR DICH (Entwickler) — einmalig
        ═══════════════════════════════════════════════════════════ -->
-  <p class="section-label">Welche App möchtest du bauen?</p>
+  <div class="audience-header">
+    <span>🧑‍💻</span> Für dich — einmalige Vorbereitung
+    <span class="badge">nur 1×</span>
+  </div>
 
-  <table style="width:100%;border-collapse:collapse;font-size:0.92rem;margin-bottom:1.5rem;">
-    <thead>
-      <tr style="background:#f0f0f0;">
-        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">App</th>
-        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">Aussehen</th>
-        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">Befehl zum Bauen</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;"><strong>Native App</strong> ⭐</td>
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Echtes Mac-Fenster, kein Browser</td>
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;font-family:monospace;">python3 setup_native.py py2app</td>
-      </tr>
-      <tr style="background:#fafafa;">
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Web-App</td>
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Buntes Browser-Fenster</td>
-        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;font-family:monospace;">python3 setup.py py2app</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Empfehlung:</strong> Nimm die <strong>Native App</strong> — sie startet schneller und sieht mehr nach einem richtigen Mac-Programm aus. Du kannst später auch beide bauen.</p>
-
-  <!-- ═══════════════════════════════════════════════════════════
-       TEIL 1 — EINMALIGE VORBEREITUNG
-       ═══════════════════════════════════════════════════════════ -->
-  <p class="section-label">Teil 1 — Einmalige Vorbereitung <span class="badge">nur 1×</span></p>
-
-  <h2>Schritt 1 &mdash; Python installieren</h2>
+  <h2>Schritt 1 &mdash; Python installieren (falls noch nicht vorhanden)</h2>
   <div class="step-block">
     Im Browser <strong>python.org/downloads</strong> aufrufen<br>
-    &rarr; Gelben Button klicken &rarr; <code>.pkg</code>-Datei öffnen<br>
-    &rarr; Installer bis zum Ende durchklicken.
+    &rarr; Gelben Button klicken &rarr; <code>.pkg</code>-Datei öffnen &rarr; Installer durchklicken.
   </div>
 
   <h2>Schritt 2 &mdash; Projektdateien herunterladen</h2>
   <div class="step-block">
     Auf der GitHub-Seite oben rechts auf <strong>„Code"</strong> klicken<br>
-    &rarr; <strong>„Download ZIP"</strong> wählen<br>
-    &rarr; ZIP im Downloads-Ordner entpacken (Doppelklick).
+    &rarr; <strong>„Download ZIP"</strong> wählen &rarr; ZIP entpacken (Doppelklick).
   </div>
 
-  <h2>Schritt 3 &mdash; Terminal öffnen</h2>
+  <h2>Schritt 3 &mdash; Terminal öffnen und in den Projektordner navigieren</h2>
   <div class="step-block">
-    Tastenkombination <strong>⌘ + Leertaste</strong> drücken<br>
-    &rarr; <code>Terminal</code> eintippen &rarr; Enter.
-  </div>
-
-  <h2>Schritt 4 &mdash; In den Projektordner navigieren</h2>
-  <div class="step-block">
-    Im Terminal <code>cd </code> eintippen (Leerzeichen am Ende!)<br>
-    &rarr; Den entpackten Projektordner aus dem Finder ins Terminal-Fenster <strong>ziehen</strong><br>
-    &rarr; Enter drücken.
+    <strong>⌘ + Leertaste</strong> → <code>Terminal</code> → Enter<br><br>
+    Dann <code>cd </code> eintippen (mit Leerzeichen), den Ordner <strong>aus dem Finder ins Terminal ziehen</strong>, Enter.
     <p class="hint">Der Ordner heißt wahrscheinlich „HasisKocht".</p>
   </div>
 
-  <h2>Schritt 5 &mdash; Benötigte Programme installieren</h2>
+  <h2>Schritt 4 &mdash; App bauen und ZIP erstellen</h2>
   <div class="step-block">
     Diesen Befehl eintippen und Enter drücken:
-    <code>pip3 install py2app youtube-transcript-api</code>
-    <p class="hint">Abwarten bis alles fertig geladen ist — das dauert 1–2 Minuten.</p>
+    <code>bash build_app.sh</code>
+    Das Skript installiert alles Nötige und erstellt automatisch die Datei:
+    <code>dist/Rezept_Transcripts.zip</code>
+    <p class="hint">Dauert ca. 2–3 Minuten. Danach ist Terminal erledigt — für immer.</p>
   </div>
 
-  <h2>Schritt 6 &mdash; Native Mac App bauen</h2>
+  <h2>Schritt 5 &mdash; ZIP an deine Frau schicken</h2>
   <div class="step-block">
-    Diesen Befehl eintippen und Enter drücken:
-    <code>python3 setup_native.py py2app</code>
-    <p class="hint">Das dauert ebenfalls ca. 1–2 Minuten. Am Ende entsteht ein Ordner „dist".</p>
+    Die Datei <strong>dist/Rezept_Transcripts.zip</strong> per AirDrop, iCloud, E-Mail oder USB-Stick schicken.<br>
+    Fertig — du musst das nie wieder machen (außer nach Updates).
   </div>
 
-  <h2>Schritt 7 &mdash; App in Programme-Ordner verschieben</h2>
-  <div class="step-block">
-    Im Finder den Ordner <strong>dist</strong> öffnen<br>
-    &rarr; <strong>„Rezept Transcripts.app"</strong> per Drag &amp; Drop in den <strong>Programme</strong>-Ordner ziehen.<br>
-    Terminal kann jetzt für immer geschlossen werden.
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════
-       TEIL 2 — TÄGLICHE NUTZUNG
-       ═══════════════════════════════════════════════════════════ -->
   <hr>
 
-  <p class="section-label">Teil 2 — Tägliche Nutzung</p>
+  <!-- ═══════════════════════════════════════════════════════════
+       FÜR DEINE FRAU — Einrichtung (einmalig)
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="audience-header">
+    <span>👩</span> Für deine Frau — einmalige Einrichtung
+    <span class="badge badge-blue">nur 1×</span>
+  </div>
 
-  <h2>App starten &amp; Transcript herunterladen</h2>
+  <h2>Schritt 1 &mdash; ZIP entpacken</h2>
   <div class="step-block">
-    1. <strong>„Rezept Transcripts"</strong> im Programme-Ordner doppelklicken<br>
-    2. YouTube-URL kopieren und im App-Fenster auf <strong>„Einfügen"</strong> klicken<br>
-    3. <strong>„Transcript herunterladen"</strong> klicken<br>
-    4. Die Textdatei wird automatisch gespeichert <em>und</em> im Finder markiert:<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<code>Dokumente → Rezept-Transcripts</code>
+    Doppelklick auf <strong>Rezept_Transcripts.zip</strong><br>
+    &rarr; Es erscheint <strong>„Rezept Transcripts.app"</strong> daneben.
+  </div>
+
+  <h2>Schritt 2 &mdash; App in den Programme-Ordner ziehen</h2>
+  <div class="step-block">
+    <strong>„Rezept Transcripts.app"</strong> per Drag &amp; Drop in den <strong>Programme-Ordner</strong> ziehen.<br>
+    <p class="hint">Finder → linke Leiste → „Programme"</p>
   </div>
 
   <div class="box-yellow">
-    <strong>Hinweis beim ersten Start:</strong> macOS fragt ggf. „App von unbekanntem Entwickler". Dann:
-    Systemeinstellungen → Datenschutz &amp; Sicherheit → <strong>„Trotzdem öffnen"</strong> klicken.
-    Das ist einmalig und harmlos.
+    <strong>Beim allerersten Start:</strong> macOS zeigt „App von unbekanntem Entwickler".<br>
+    &rarr; <strong>Rechtsklick</strong> auf die App → <strong>„Öffnen"</strong> → nochmals <strong>„Öffnen"</strong> bestätigen.<br>
+    Das ist einmalig und völlig harmlos.
+  </div>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TÄGLICHE NUTZUNG
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="audience-header">
+    <span>▶️</span> Täglich — so wird ein Transcript heruntergeladen
+  </div>
+
+  <div class="step-block">
+    1. <strong>„Rezept Transcripts"</strong> im Programme-Ordner doppelklicken<br>
+    2. YouTube-Link kopieren (<strong>⌘ C</strong>)<br>
+    3. Im App-Fenster auf <strong>„Einfügen"</strong> klicken<br>
+    4. <strong>„Transcript herunterladen"</strong> klicken<br>
+    5. Die Textdatei wird gespeichert und der Ordner öffnet sich automatisch im Finder
   </div>
 
   <div class="box-green">
-    <strong>Wo landen die Dateien?</strong> Alle heruntergeladenen Transcripts liegen im Ordner<br>
-    <strong>Dokumente → Rezept-Transcripts</strong> und können dort direkt geöffnet werden.<br>
-    Nach jedem Download öffnet die App den Ordner automatisch im Finder.
+    <strong>Wo landen die Dateien?</strong><br>
+    Automatisch in <strong>Dokumente → Rezept-Transcripts</strong> — der Finder öffnet diesen Ordner nach jedem Download von selbst.
   </div>
 
-  <footer>Erstellt für den privaten Gebrauch &mdash; Rezept Transcripts Mac App</footer>
+  <footer>Erstellt für den privaten Gebrauch &mdash; Rezept Transcripts</footer>
 
 </body>
 </html>
