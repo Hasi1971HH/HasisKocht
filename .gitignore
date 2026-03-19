@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 transcripts/
 .env
+
+# PyInstaller build artifacts
+dist/
+build/
+*.spec

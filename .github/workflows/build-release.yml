@@ -1,0 +1,53 @@
+name: Build & Release Mac App
+
+# Wird ausgelöst wenn du einen Tag wie "v1.0" oder "v1.2.3" pushst
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build auf macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Abhängigkeiten installieren
+        run: pip install pyinstaller youtube-transcript-api
+
+      - name: App bauen
+        run: |
+          pyinstaller \
+            --windowed \
+            --noconfirm \
+            --clean \
+            --name "Rezept Transcripts" \
+            native_app.py
+
+      - name: ZIP erstellen
+        run: |
+          cd dist
+          zip -r Rezept_Transcripts.zip "Rezept Transcripts.app"
+
+      - name: GitHub Release erstellen und ZIP hochladen
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Rezept Transcripts ${{ github.ref_name }}"
+          body: |
+            ## Download
+
+            1. **Rezept_Transcripts.zip** herunterladen
+            2. Doppelklick zum Entpacken
+            3. „Rezept Transcripts.app" in den Programme-Ordner ziehen
+            4. Beim ersten Start: Rechtsklick → Öffnen
+
+            Kein Python, kein Terminal — einfach loslegen!
+          files: dist/Rezept_Transcripts.zip
