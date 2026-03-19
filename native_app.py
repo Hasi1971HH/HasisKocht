@@ -6,6 +6,7 @@ Lädt YouTube-Transcripts herunter und speichert sie in ~/Documents/Rezept-Trans
 import os
 import re
 import threading
+import urllib.request
 import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import ttk
@@ -47,6 +48,34 @@ def extract_video_id(url: str) -> str | None:
         if m:
             return m.group(1)
     return None
+
+
+def fetch_video_title(video_id: str) -> str:
+    """Holt den YouTube-Videotitel via HTTP (kein zusätzliches Paket nötig)."""
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+        m = re.search(r'<title>(.+?)\s*-\s*YouTube</title>', html)
+        if m:
+            return m.group(1)
+        # Fallback: og:title
+        m = re.search(r'property="og:title"\s+content="([^"]+)"', html)
+        if m:
+            return m.group(1)
+    except Exception:
+        pass
+    return video_id  # Fallback auf ID
+
+
+def slugify(title: str) -> str:
+    """Wandelt einen Titel in einen sicheren Dateinamen um."""
+    title = title.replace("&amp;", "&").replace("&#39;", "'")
+    # Nur erlaubte Zeichen behalten
+    title = re.sub(r'[^\w\s\-äöüÄÖÜß]', '', title)
+    title = re.sub(r'\s+', '_', title.strip())
+    return title[:80]  # Länge begrenzen
 
 
 def fetch_transcript(video_id: str) -> tuple[str, str]:
@@ -257,10 +286,12 @@ class App(tk.Tk):
             self.after(0, self._set_btn_enabled, True)
             return
 
-        filename = f"transcript_{video_id}_{lang}.txt"
+        title = fetch_video_title(video_id)
+        slug = slugify(title)
+        filename = f"{slug}_{lang}.txt"
         filepath = os.path.join(TRANSCRIPTS_DIR, filename)
         with open(filepath, "w", encoding="utf-8") as f:
-            f.write("YouTube Transcript\n")
+            f.write(f"YouTube Transcript: {title}\n")
             f.write(f"Video-ID: {video_id}\n")
             f.write(f"URL: https://www.youtube.com/watch?v={video_id}\n")
             f.write(f"Sprache: {lang}\n")
