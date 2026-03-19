@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 from youtube_transcript_api import (
     YouTubeTranscriptApi,
@@ -28,6 +29,22 @@ def extract_video_id(url: str) -> str | None:
         if match:
             return match.group(1)
     return None
+
+
+def fetch_video_title(video_id: str) -> str:
+    """Fetch video title from YouTube page title tag."""
+    try:
+        resp = requests.get(
+            f"https://www.youtube.com/watch?v={video_id}",
+            headers={"Accept-Language": "de,en;q=0.9"},
+            timeout=10,
+        )
+        match = re.search(r"<title>(.+?)\s*-\s*YouTube</title>", resp.text)
+        if match:
+            return match.group(1).strip()
+    except Exception:
+        pass
+    return video_id
 
 
 def fetch_transcript(video_id: str) -> tuple[str, str]:
@@ -93,10 +110,13 @@ def index():
             flash(f"Fehler beim Laden des Transcripts: {e}", "error")
             return redirect(url_for("index"))
 
-        filename = f"transcript_{video_id}_{lang}.txt"
+        title = fetch_video_title(video_id)
+        safe_title = re.sub(r'[\\/*?:"<>|]', "_", title)[:80]
+        filename = f"{safe_title}_{lang}.txt"
         filepath = os.path.join(TRANSCRIPTS_DIR, filename)
         with open(filepath, "w", encoding="utf-8") as f:
-            f.write("YouTube Transcript\n")
+            f.write(f"YouTube Transcript\n")
+            f.write(f"Titel: {title}\n")
             f.write(f"Video-ID: {video_id}\n")
             f.write(f"URL: https://www.youtube.com/watch?v={video_id}\n")
             f.write(f"Sprache: {lang}\n")
