@@ -112,6 +112,38 @@
     <strong>Gute Nachricht:</strong> Nach der Einrichtung reicht ein Doppelklick auf das App-Symbol — kein Terminal, kein Browser, nichts weiter.
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════
+       WELCHE APP? — Auswahl
+       ═══════════════════════════════════════════════════════════ -->
+  <p class="section-label">Welche App möchtest du bauen?</p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:0.92rem;margin-bottom:1.5rem;">
+    <thead>
+      <tr style="background:#f0f0f0;">
+        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">App</th>
+        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">Aussehen</th>
+        <th style="padding:0.5rem 0.75rem;text-align:left;border:1px solid #ddd;">Befehl zum Bauen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;"><strong>Native App</strong> ⭐</td>
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Echtes Mac-Fenster, kein Browser</td>
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;font-family:monospace;">python3 setup_native.py py2app</td>
+      </tr>
+      <tr style="background:#fafafa;">
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Web-App</td>
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;">Buntes Browser-Fenster</td>
+        <td style="padding:0.5rem 0.75rem;border:1px solid #ddd;font-family:monospace;">python3 setup.py py2app</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Empfehlung:</strong> Nimm die <strong>Native App</strong> — sie startet schneller und sieht mehr nach einem richtigen Mac-Programm aus. Du kannst später auch beide bauen.</p>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TEIL 1 — EINMALIGE VORBEREITUNG
+       ═══════════════════════════════════════════════════════════ -->
   <p class="section-label">Teil 1 — Einmalige Vorbereitung <span class="badge">nur 1×</span></p>
 
   <h2>Schritt 1 &mdash; Python installieren</h2>
@@ -145,14 +177,14 @@
   <h2>Schritt 5 &mdash; Benötigte Programme installieren</h2>
   <div class="step-block">
     Diesen Befehl eintippen und Enter drücken:
-    <code>pip3 install py2app pywebview flask youtube-transcript-api</code>
+    <code>pip3 install py2app youtube-transcript-api</code>
     <p class="hint">Abwarten bis alles fertig geladen ist — das dauert 1–2 Minuten.</p>
   </div>
 
-  <h2>Schritt 6 &mdash; Mac App bauen</h2>
+  <h2>Schritt 6 &mdash; Native Mac App bauen</h2>
   <div class="step-block">
     Diesen Befehl eintippen und Enter drücken:
-    <code>python3 setup.py py2app</code>
+    <code>python3 setup_native.py py2app</code>
     <p class="hint">Das dauert ebenfalls ca. 1–2 Minuten. Am Ende entsteht ein Ordner „dist".</p>
   </div>
 
@@ -163,6 +195,9 @@
     Terminal kann jetzt für immer geschlossen werden.
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════
+       TEIL 2 — TÄGLICHE NUTZUNG
+       ═══════════════════════════════════════════════════════════ -->
   <hr>
 
   <p class="section-label">Teil 2 — Tägliche Nutzung</p>
@@ -170,9 +205,9 @@
   <h2>App starten &amp; Transcript herunterladen</h2>
   <div class="step-block">
     1. <strong>„Rezept Transcripts"</strong> im Programme-Ordner doppelklicken<br>
-    2. YouTube-URL in das Textfeld einfügen<br>
-    3. <strong>„Download"</strong> klicken<br>
-    4. Die Textdatei wird automatisch gespeichert unter:<br>
+    2. YouTube-URL kopieren und im App-Fenster auf <strong>„Einfügen"</strong> klicken<br>
+    3. <strong>„Transcript herunterladen"</strong> klicken<br>
+    4. Die Textdatei wird automatisch gespeichert <em>und</em> im Finder markiert:<br>
     &nbsp;&nbsp;&nbsp;&nbsp;<code>Dokumente → Rezept-Transcripts</code>
   </div>
 
@@ -184,7 +219,8 @@
 
   <div class="box-green">
     <strong>Wo landen die Dateien?</strong> Alle heruntergeladenen Transcripts liegen im Ordner<br>
-    <strong>Dokumente → Rezept-Transcripts</strong> und können dort direkt geöffnet werden.
+    <strong>Dokumente → Rezept-Transcripts</strong> und können dort direkt geöffnet werden.<br>
+    Nach jedem Download öffnet die App den Ordner automatisch im Finder.
   </div>
 
   <footer>Erstellt für den privaten Gebrauch &mdash; Rezept Transcripts Mac App</footer>
