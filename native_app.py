@@ -53,17 +53,30 @@ def extract_video_id(url: str) -> str | None:
 def fetch_video_title(video_id: str) -> str:
     """Holt den YouTube-Videotitel via HTTP (kein zusätzliches Paket nötig)."""
     url = f"https://www.youtube.com/watch?v={video_id}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    req = urllib.request.Request(url, headers={
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    })
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
             html = resp.read().decode("utf-8", errors="ignore")
+        # <title>-Tag
         m = re.search(r'<title>(.+?)\s*-\s*YouTube</title>', html)
         if m:
-            return m.group(1)
-        # Fallback: og:title
+            return m.group(1).strip()
+        # og:title
         m = re.search(r'property="og:title"\s+content="([^"]+)"', html)
         if m:
-            return m.group(1)
+            return m.group(1).strip()
+        # ytInitialData JSON
+        m = re.search(r'"title"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"', html)
+        if m:
+            return m.group(1).strip()
     except Exception:
         pass
     return video_id  # Fallback auf ID
