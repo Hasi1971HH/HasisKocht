@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Anleitung: YouTube Transcript Downloader</title>
+  <title>Anleitung: Rezept Transcripts — Mac App</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
@@ -13,17 +13,8 @@
       line-height: 1.7;
     }
 
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.25rem;
-      color: #cc0000;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-bottom: 2.5rem;
-      font-size: 0.95rem;
-    }
+    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; color: #cc0000; }
+    .subtitle { color: #666; margin-bottom: 2.5rem; font-size: 0.95rem; }
 
     h2 {
       font-size: 1.1rem;
@@ -62,13 +53,19 @@
       padding: 0;
     }
 
-    .hint {
-      font-size: 0.85rem;
-      color: #888;
-      margin-top: 0.3rem;
-    }
+    .hint { font-size: 0.85rem; color: #888; margin-top: 0.3rem; }
 
-    .box {
+    .box-green {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .box-green strong { color: #276749; }
+
+    .box-yellow {
       background: #fff8e1;
       border: 1px solid #f0c040;
       border-radius: 8px;
@@ -76,93 +73,121 @@
       margin: 1.5rem 0;
       font-size: 0.9rem;
     }
+    .box-yellow strong { color: #996600; }
 
-    .box strong { color: #996600; }
-
-    hr {
-      border: none;
-      border-top: 1px solid #e0e0e0;
-      margin: 2.5rem 0;
+    .badge {
+      display: inline-block;
+      background: #cc0000;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
     }
 
-    footer {
-      font-size: 0.8rem;
+    hr { border: none; border-top: 1px solid #e0e0e0; margin: 2.5rem 0; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
       color: #aaa;
-      margin-top: 3rem;
+      text-transform: uppercase;
+      margin-top: 2.5rem;
+      margin-bottom: 0.25rem;
     }
 
-    @media print {
-      body { margin: 20px auto; }
-    }
+    footer { font-size: 0.8rem; color: #aaa; margin-top: 3rem; }
+
+    @media print { body { margin: 20px auto; } }
   </style>
 </head>
 <body>
 
-  <h1>YouTube Transcript Downloader</h1>
-  <p class="subtitle">Einrichtungs-Anleitung für macOS &mdash; einmalig, ca. 10 Minuten</p>
+  <h1>Rezept Transcripts</h1>
+  <p class="subtitle">Mac App — Einrichtungs-Anleitung &mdash; einmalig, ca. 15 Minuten</p>
+
+  <div class="box-green">
+    <strong>Gute Nachricht:</strong> Nach der Einrichtung reicht ein Doppelklick auf das App-Symbol — kein Terminal, kein Browser, nichts weiter.
+  </div>
+
+  <p class="section-label">Teil 1 — Einmalige Vorbereitung <span class="badge">nur 1×</span></p>
 
   <h2>Schritt 1 &mdash; Python installieren</h2>
   <div class="step-block">
     Im Browser <strong>python.org/downloads</strong> aufrufen<br>
-    &rarr; Gelben Button klicken &rarr; <code>.pkg</code>-Datei öffnen &rarr; Installer bis zum Ende durchklicken.
+    &rarr; Gelben Button klicken &rarr; <code>.pkg</code>-Datei öffnen<br>
+    &rarr; Installer bis zum Ende durchklicken.
   </div>
 
   <h2>Schritt 2 &mdash; Projektdateien herunterladen</h2>
   <div class="step-block">
     Auf der GitHub-Seite oben rechts auf <strong>„Code"</strong> klicken<br>
-    &rarr; <strong>„Download ZIP"</strong> wählen &rarr; ZIP-Datei im Downloads-Ordner entpacken (Doppelklick).
+    &rarr; <strong>„Download ZIP"</strong> wählen<br>
+    &rarr; ZIP im Downloads-Ordner entpacken (Doppelklick).
   </div>
 
   <h2>Schritt 3 &mdash; Terminal öffnen</h2>
   <div class="step-block">
     Tastenkombination <strong>⌘ + Leertaste</strong> drücken<br>
-    &rarr; <code>Terminal</code> eintippen &rarr; Enter drücken.
+    &rarr; <code>Terminal</code> eintippen &rarr; Enter.
   </div>
 
   <h2>Schritt 4 &mdash; In den Projektordner navigieren</h2>
   <div class="step-block">
-    Im Terminal eintippen: <code>cd </code> (mit Leerzeichen am Ende!)<br>
+    Im Terminal <code>cd </code> eintippen (Leerzeichen am Ende!)<br>
     &rarr; Den entpackten Projektordner aus dem Finder ins Terminal-Fenster <strong>ziehen</strong><br>
     &rarr; Enter drücken.
-    <p class="hint">Tipp: Der Ordner heißt wahrscheinlich „HasisKocht" o.ä.</p>
+    <p class="hint">Der Ordner heißt wahrscheinlich „HasisKocht".</p>
   </div>
 
-  <h2>Schritt 5 &mdash; Abhängigkeiten installieren <em>(nur einmalig!)</em></h2>
+  <h2>Schritt 5 &mdash; Benötigte Programme installieren</h2>
   <div class="step-block">
     Diesen Befehl eintippen und Enter drücken:
-    <code>pip3 install -r requirements.txt</code>
-    <p class="hint">Abwarten bis alles fertig geladen ist. Einmal reicht für immer.</p>
+    <code>pip3 install py2app pywebview flask youtube-transcript-api</code>
+    <p class="hint">Abwarten bis alles fertig geladen ist — das dauert 1–2 Minuten.</p>
   </div>
 
-  <h2>Schritt 6 &mdash; App starten</h2>
+  <h2>Schritt 6 &mdash; Mac App bauen</h2>
   <div class="step-block">
-    <code>python3 app.py</code>
-    Im Terminal erscheint dann: <em>Running on http://127.0.0.1:5000</em>
-    <p class="hint">Das Terminal-Fenster offen lassen, solange du die App nutzt.</p>
+    Diesen Befehl eintippen und Enter drücken:
+    <code>python3 setup.py py2app</code>
+    <p class="hint">Das dauert ebenfalls ca. 1–2 Minuten. Am Ende entsteht ein Ordner „dist".</p>
   </div>
 
-  <h2>Schritt 7 &mdash; Browser öffnen &amp; loslegen</h2>
+  <h2>Schritt 7 &mdash; App in Programme-Ordner verschieben</h2>
   <div class="step-block">
-    Im Browser aufrufen: <code>http://localhost:5000</code><br>
-    &rarr; YouTube-URL eingeben &rarr; <strong>Download</strong> klicken &rarr; fertig!
+    Im Finder den Ordner <strong>dist</strong> öffnen<br>
+    &rarr; <strong>„Rezept Transcripts.app"</strong> per Drag &amp; Drop in den <strong>Programme</strong>-Ordner ziehen.<br>
+    Terminal kann jetzt für immer geschlossen werden.
   </div>
 
   <hr>
 
-  <h2>Beim nächsten Mal (Kurzversion)</h2>
+  <p class="section-label">Teil 2 — Tägliche Nutzung</p>
+
+  <h2>App starten &amp; Transcript herunterladen</h2>
   <div class="step-block">
-    1. Terminal öffnen (<strong>⌘ + Leertaste</strong> → Terminal)<br>
-    2. <code>cd </code> + Projektordner reinziehen + Enter<br>
-    3. <code>python3 app.py</code><br>
-    4. Browser → <code>localhost:5000</code>
-    <p class="hint">Schritte 1–5 der Ersteinrichtung entfallen ab jetzt komplett.</p>
+    1. <strong>„Rezept Transcripts"</strong> im Programme-Ordner doppelklicken<br>
+    2. YouTube-URL in das Textfeld einfügen<br>
+    3. <strong>„Download"</strong> klicken<br>
+    4. Die Textdatei wird automatisch gespeichert unter:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<code>Dokumente → Rezept-Transcripts</code>
   </div>
 
-  <div class="box">
-    <strong>Hinweis:</strong> Die App läuft nur lokal auf dem eigenen Mac und ist für niemanden sonst im Internet erreichbar. Kein Account, keine Cloud, keine Kosten.
+  <div class="box-yellow">
+    <strong>Hinweis beim ersten Start:</strong> macOS fragt ggf. „App von unbekanntem Entwickler". Dann:
+    Systemeinstellungen → Datenschutz &amp; Sicherheit → <strong>„Trotzdem öffnen"</strong> klicken.
+    Das ist einmalig und harmlos.
   </div>
 
-  <footer>Erstellt für den privaten Gebrauch &mdash; YouTube Transcript Downloader</footer>
+  <div class="box-green">
+    <strong>Wo landen die Dateien?</strong> Alle heruntergeladenen Transcripts liegen im Ordner<br>
+    <strong>Dokumente → Rezept-Transcripts</strong> und können dort direkt geöffnet werden.
+  </div>
+
+  <footer>Erstellt für den privaten Gebrauch &mdash; Rezept Transcripts Mac App</footer>
 
 </body>
 </html>
