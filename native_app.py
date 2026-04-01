@@ -71,14 +71,20 @@ def save_api_key(key: str):
 
 
 # ── Rezept-Generierung via Groq ────────────────────────────────────────────────
+def strip_timestamps(transcript: str) -> str:
+    """Entfernt [MM:SS]-Zeitstempel um Tokens zu sparen."""
+    return re.sub(r'^\[\d{2}:\d{2}\] ?', '', transcript, flags=re.MULTILINE)
+
+
 def generate_recipe_html(full_transcript: str) -> str:
     from groq import Groq
     client = Groq(api_key=load_api_key())
+    clean_transcript = strip_timestamps(full_transcript)
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="llama-3.1-8b-instant",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Hier ist das YouTube-Transkript:\n\n{full_transcript}"},
+            {"role": "user", "content": f"Hier ist das YouTube-Transkript:\n\n{clean_transcript}"},
         ],
         max_tokens=8192,
         temperature=0.3,
