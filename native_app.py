@@ -80,6 +80,9 @@ def generate_recipe_html(full_transcript: str) -> str:
     from groq import Groq
     client = Groq(api_key=load_api_key())
     clean_transcript = strip_timestamps(full_transcript)
+    # Auf 12.000 Zeichen begrenzen — reicht für jedes Rezeptvideo
+    if len(clean_transcript) > 12000:
+        clean_transcript = clean_transcript[:12000]
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
