@@ -34,11 +34,23 @@ Kein erklärender Text, kein Markdown, nur das JSON-Objekt.
 Pflichtfelder:
 {
   "titel": "Name des Gerichts",
+  "kurzbeschreibung": "Ein Satz über das Gericht.",
   "portionen_basis": 4,
   "zutaten": [
-    {"name": "Zutat", "menge": 200, "einheit": "g"}
+    {
+      "gruppe": "Abschnittsname (z.B. Gewürzmischung, Sofrito, Topping — oder leer wenn keine Gruppen)",
+      "name": "Zutat",
+      "menge": 200,
+      "einheit": "g",
+      "notiz": "kurzer Hinweis zur Vorbereitung oder Verwendung (optional, sonst leer)"
+    }
   ],
-  "zubereitung": ["Schritt 1", "Schritt 2"],
+  "zubereitung": [
+    {
+      "titel": "Kurze Schritt-Überschrift (5-8 Wörter)",
+      "beschreibung": "Ausführliche Anleitung mit Zeiten, Temperaturen und Tipps aus dem Video."
+    }
+  ],
   "naehrwerte_pro_portion": {
     "kalorien": 400,
     "kohlenhydrate_g": 45,
@@ -51,11 +63,11 @@ Pflichtfelder:
     "kalorien": 130,
     "kohlenhydrate_g": 15
   },
-  "video_id": "YouTubeVideoID",
-  "kurzbeschreibung": "Ein Satz über das Gericht."
+  "video_id": "YouTubeVideoID"
 }
 
-Alle Mengenangaben zwingend metrisch (g, ml, kg, l). Niemals oz, cup, pound."""
+Alle Mengenangaben zwingend metrisch (g, ml, kg, l). Niemals oz, cup, pound.
+Zubereitung so detailliert wie möglich — alle Hinweise, Zeiten und Tipps aus dem Video einfließen lassen."""
 
 
 # ── Farben & Stil ──────────────────────────────────────────────────────────────
@@ -95,15 +107,15 @@ def extract_recipe_json(full_transcript: str) -> dict:
     from groq import Groq
     client = Groq(api_key=load_api_key())
     clean = strip_timestamps(full_transcript)
-    if len(clean) > 6000:
-        clean = clean[:6000]
+    if len(clean) > 10000:
+        clean = clean[:10000]
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
         messages=[
             {"role": "system", "content": JSON_PROMPT},
             {"role": "user", "content": f"Transkript:\n\n{clean}"},
         ],
-        max_tokens=1200,
+        max_tokens=2000,
         temperature=0.1,
     )
     raw = response.choices[0].message.content.strip()
@@ -127,10 +139,38 @@ def build_html(data: dict) -> str:
     # Zutaten-Zeilen als JSON für den Slider-JS
     zutaten_json = json.dumps(zutaten, ensure_ascii=False)
 
-    zubereitung_html = "\n".join(
-        f'<li class="step">{re.sub(chr(60), "&lt;", re.sub(chr(62), "&gt;", s))}</li>'
-        for s in zubereitung
-    )
+    # Zubereitung: unterstützt {titel, beschreibung} und legacy string
+    def render_step(s):
+        def esc(t): return t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        if isinstance(s, dict):
+            titel_s = esc(s.get("titel", ""))
+            desc_s  = esc(s.get("beschreibung", ""))
+            return (f'<li class="step"><span class="step-titel">{titel_s}</span>'
+                    f'<span class="step-desc">{desc_s}</span></li>')
+        return f'<li class="step"><span class="step-desc">{esc(str(s))}</span></li>'
+
+    zubereitung_html = "\n".join(render_step(s) for s in zubereitung)
+
+    # Zutaten nach Gruppe sortieren für statisches Gruppen-HTML (für Notizen)
+    gruppen_html_parts = []
+    current_gruppe = None
+    for z in zutaten:
+        g = z.get("gruppe", "")
+        if g and g != current_gruppe:
+            current_gruppe = g
+            gruppen_html_parts.append(f'<div class="gruppe-header">{g}</div>')
+        notiz = z.get("notiz", "")
+        notiz_html = f'<span class="zutat-notiz">{notiz}</span>' if notiz else ""
+        gruppen_html_parts.append(
+            f'<div class="zutat-row" data-name="{z.get("name","")}" '
+            f'data-menge="{z.get("menge",0)}" data-einheit="{z.get("einheit","")}">'
+            f'<span class="zutat-info"><span class="zutat-name">{z.get("name","")}</span>'
+            f'{notiz_html}</span>'
+            f'<span class="zutat-menge" data-base="{z.get("menge",0)}" '
+            f'data-einheit="{z.get("einheit","")}">'
+            f'{z.get("menge",0)} {z.get("einheit","")}</span></div>'
+        )
+    gruppen_html = "\n".join(gruppen_html_parts)
 
     def nw_row(label, key, unit, highlight=False):
         val = nw_portion.get(key, "–")
@@ -189,19 +229,29 @@ def build_html(data: dict) -> str:
   .panel {{ display: none; padding: 28px 32px 36px; }}
   .panel.active {{ display: block; }}
   /* Zutaten */
-  .zutat-row {{ display: flex; justify-content: space-between; align-items: center;
+  .gruppe-header {{ font-size: 13px; font-weight: 700; color: #6e6e73; text-transform: uppercase;
+                    letter-spacing: .5px; padding: 18px 0 6px; }}
+  .gruppe-header:first-child {{ padding-top: 0; }}
+  .zutat-row {{ display: flex; justify-content: space-between; align-items: flex-start;
                padding: 10px 0; border-bottom: 1px solid #f0f0f5; font-size: 15px; }}
   .zutat-row:last-child {{ border-bottom: none; }}
-  .zutat-menge {{ font-weight: 600; color: #1d1d1f; min-width: 80px; text-align: right; }}
+  .zutat-info {{ display: flex; flex-direction: column; gap: 2px; }}
+  .zutat-name {{ color: #1d1d1f; }}
+  .zutat-notiz {{ font-size: 12px; color: #6e6e73; font-style: italic; }}
+  .zutat-menge {{ font-weight: 600; color: #1d1d1f; min-width: 80px; text-align: right;
+                  white-space: nowrap; padding-left: 12px; }}
   /* Zubereitung */
   ol.steps {{ padding-left: 0; list-style: none; counter-reset: step; }}
   li.step {{ counter-increment: step; padding: 14px 0 14px 48px; position: relative;
-             border-bottom: 1px solid #f0f0f5; font-size: 15px; line-height: 1.55; }}
+             border-bottom: 1px solid #f0f0f5; }}
   li.step:last-child {{ border-bottom: none; }}
   li.step::before {{ content: counter(step); position: absolute; left: 0; top: 14px;
                      width: 30px; height: 30px; background: #cc0000; color: #fff;
                      border-radius: 50%; display: flex; align-items: center;
                      justify-content: center; font-weight: 700; font-size: 13px; }}
+  .step-titel {{ display: block; font-weight: 600; font-size: 15px; color: #1d1d1f;
+                 margin-bottom: 4px; }}
+  .step-desc {{ display: block; font-size: 14px; color: #3d3d3f; line-height: 1.6; }}
   /* Nährwerte */
   .nw-table {{ width: 100%; border-collapse: collapse; font-size: 15px; }}
   .nw-table th {{ text-align: left; padding: 10px 0; color: #6e6e73;
@@ -246,7 +296,7 @@ def build_html(data: dict) -> str:
   </div>
 
   <div id="zutaten" class="panel active">
-    <div id="zutatenListe"></div>
+    {gruppen_html}
   </div>
 
   <div id="zubereitung" class="panel">
@@ -274,7 +324,6 @@ def build_html(data: dict) -> str:
 
 <script>
 const BASIS = {portionen};
-const ZUTATEN = {zutaten_json};
 
 function showTab(id, el) {{
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -283,28 +332,17 @@ function showTab(id, el) {{
   el.classList.add('active');
 }}
 
-function formatMenge(menge, faktor) {{
-  const v = menge * faktor;
-  if (v >= 1000 && ['g','ml'].includes('g')) return (v/1000).toFixed(1).replace('.0','') + (menge >= 1 ? ' kg' : ' l');
-  if (v < 1) return (v * 1000).toFixed(0) + ' ml';
-  return (Number.isInteger(v) ? v : v.toFixed(1)) + '';
-}}
-
 function updatePortions(val) {{
   document.getElementById('portionsNum').textContent = val;
   const faktor = val / BASIS;
-  const liste = document.getElementById('zutatenListe');
-  liste.innerHTML = ZUTATEN.map(z => {{
-    const neuerWert = z.menge * faktor;
-    const anzeige = neuerWert % 1 === 0 ? neuerWert : neuerWert.toFixed(1);
-    return `<div class="zutat-row">
-      <span>${{z.name}}</span>
-      <span class="zutat-menge">${{anzeige}} ${{z.einheit}}</span>
-    </div>`;
-  }}).join('');
+  document.querySelectorAll('.zutat-menge').forEach(el => {{
+    const base = parseFloat(el.dataset.base);
+    const einheit = el.dataset.einheit;
+    const neu = base * faktor;
+    const anzeige = (neu % 1 === 0) ? neu : neu.toFixed(1);
+    el.textContent = anzeige + ' ' + einheit;
+  }});
 }}
-
-updatePortions(BASIS);
 </script>
 </body>
 </html>"""
