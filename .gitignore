@@ -1,9 +1,20 @@
+# Python
 __pycache__/
-*.pyc
-transcripts/
-.env
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
 
-# PyInstaller build artifacts
+# Build
 dist/
 build/
 *.spec
+
+# macOS
+.DS_Store
+
+# App config (enthält API Keys)
+.hasiskocht_config
+
+# Transcripts (lokale Nutzerdaten)
+transcripts/
