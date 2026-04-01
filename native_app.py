@@ -86,7 +86,7 @@ def generate_recipe_html(full_transcript: str) -> str:
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Hier ist das YouTube-Transkript:\n\n{clean_transcript}"},
         ],
-        max_tokens=8192,
+        max_tokens=4096,
         temperature=0.3,
     )
     html = response.choices[0].message.content.strip()
@@ -441,11 +441,11 @@ class App(tk.Tk):
             if any(k in err.lower() for k in ("auth", "api_key", "invalid_api", "unauthorized")):
                 self.after(0, self._set_status, "error",
                            "Ungültiger API Key. Bitte über ⚙ einen gültigen Groq Key eingeben.")
-            elif any(k in err.lower() for k in ("rate", "limit", "quota")):
+            elif any(k in err.lower() for k in ("rate", "quota")):
                 self.after(0, self._set_status, "error",
-                           "Groq-Limit erreicht. Bitte kurz warten und erneut versuchen.")
+                           f"Groq Rate-Limit. Bitte 30 Sek. warten. ({err[:80]})")
             else:
-                self.after(0, self._set_status, "error", f"KI-Fehler: {err}")
+                self.after(0, self._set_status, "error", f"Fehler: {err[:120]}")
             self.after(0, self._set_btn_enabled, True)
             return
 
