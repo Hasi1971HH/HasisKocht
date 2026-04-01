@@ -12,7 +12,7 @@ set -e
 
 echo ""
 echo "🔧  Abhängigkeiten installieren …"
-pip3 install --quiet pyinstaller youtube-transcript-api
+pip3 install --quiet pyinstaller youtube-transcript-api groq
 
 echo ""
 echo "🏗️   App bauen (dauert 1–2 Minuten) …"
@@ -20,22 +20,28 @@ pyinstaller \
   --windowed \
   --noconfirm \
   --clean \
-  --name "Rezept Transcripts" \
+  --name "HasisKocht" \
+  --hidden-import groq \
+  --hidden-import httpx \
+  --hidden-import httpcore \
+  --hidden-import anyio \
+  --hidden-import distro \
+  --hidden-import sniffio \
   native_app.py
 
 echo ""
 echo "📦  ZIP erstellen …"
 cd dist
-rm -f Rezept_Transcripts.zip
-zip -r --quiet Rezept_Transcripts.zip "Rezept Transcripts.app"
+rm -f HasisKocht.zip
+zip -r --quiet HasisKocht.zip "HasisKocht.app"
 cd ..
 
 echo ""
 echo "✅  Fertig!"
 echo ""
 echo "   Die fertige App liegt hier:"
-echo "   $(pwd)/dist/Rezept_Transcripts.zip"
+echo "   $(pwd)/dist/HasisKocht.zip"
 echo ""
-echo "   Einfach per AirDrop, iCloud oder E-Mail an deine Frau schicken."
-echo "   Sie muss nur entpacken und in den Programme-Ordner ziehen — fertig."
+echo "   ZIP entpacken → HasisKocht.app in den Programme-Ordner ziehen → fertig."
+echo "   Beim ersten Start wird einmalig der Groq API Key abgefragt."
 echo ""

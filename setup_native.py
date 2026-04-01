@@ -17,24 +17,32 @@ OPTIONS = {
     "iconfile": None,   # replace with "icon.icns" once you have one
     "packages": [
         "youtube_transcript_api",
+        "groq",
+        "httpx",
+        "httpcore",
+        "anyio",
+        "distro",
+        "sniffio",
     ],
     "includes": [
         "tkinter",
         "importlib.metadata",
+        "json",
+        "webbrowser",
     ],
     "plist": {
-        "CFBundleName": "Rezept Transcripts",
-        "CFBundleDisplayName": "Rezept Transcripts",
-        "CFBundleIdentifier": "de.hasiskocht.rezept-transcripts-native",
-        "CFBundleVersion": "1.0.0",
-        "CFBundleShortVersionString": "1.0",
+        "CFBundleName": "HasisKocht",
+        "CFBundleDisplayName": "HasisKocht",
+        "CFBundleIdentifier": "de.hasiskocht.native",
+        "CFBundleVersion": "2.0.0",
+        "CFBundleShortVersionString": "2.0",
         "NSHumanReadableCopyright": "Hasis Küche",
         "NSHighResolutionCapable": True,
     },
 }
 
 setup(
-    name="Rezept Transcripts",
+    name="HasisKocht",
     app=APP,
     options={"py2app": OPTIONS},
     setup_requires=["py2app"],
