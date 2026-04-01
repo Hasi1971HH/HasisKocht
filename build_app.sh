@@ -1,14 +1,15 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# build_app.sh — Baut die selbst-enthaltene Mac App mit PyInstaller
+# build_app.sh — Baut HasisKocht als Mac-App + DMG
 #
-# Voraussetzung: Python 3 (nur für dich als Entwickler, NICHT für die Endnutzerin)
+# Voraussetzung: Python 3 + Homebrew (nur einmalig als Entwickler nötig)
 # Aufruf:  bash build_app.sh
 #
-# Ergebnis: dist/Rezept_Transcripts.zip
-#           → Diese Datei per AirDrop / iCloud / E-Mail an deine Frau schicken
+# Ergebnis: dist/HasisKocht.dmg  → direkt weiterschicken oder anbieten
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
+
+APP_NAME="HasisKocht"
 
 echo ""
 echo "🔧  Abhängigkeiten installieren …"
@@ -20,7 +21,7 @@ pyinstaller \
   --windowed \
   --noconfirm \
   --clean \
-  --name "HasisKocht" \
+  --name "$APP_NAME" \
   --hidden-import groq \
   --hidden-import httpx \
   --hidden-import httpcore \
@@ -30,18 +31,35 @@ pyinstaller \
   native_app.py
 
 echo ""
-echo "📦  ZIP erstellen …"
-cd dist
-rm -f HasisKocht.zip
-zip -r --quiet HasisKocht.zip "HasisKocht.app"
-cd ..
+echo "💿  DMG erstellen …"
+
+DMG_DIR="dist/dmg_tmp"
+rm -rf "$DMG_DIR"
+mkdir -p "$DMG_DIR"
+
+# App + Applications-Symlink ins DMG-Verzeichnis
+cp -r "dist/$APP_NAME.app" "$DMG_DIR/"
+ln -s /Applications "$DMG_DIR/Applications"
+
+# DMG bauen
+hdiutil create \
+  -volname "$APP_NAME" \
+  -srcfolder "$DMG_DIR" \
+  -ov \
+  -format UDZO \
+  "dist/$APP_NAME.dmg"
+
+# Aufräumen
+rm -rf "$DMG_DIR"
 
 echo ""
 echo "✅  Fertig!"
 echo ""
 echo "   Die fertige App liegt hier:"
-echo "   $(pwd)/dist/HasisKocht.zip"
+echo "   $(pwd)/dist/$APP_NAME.dmg"
 echo ""
-echo "   ZIP entpacken → HasisKocht.app in den Programme-Ordner ziehen → fertig."
-echo "   Beim ersten Start wird einmalig der Groq API Key abgefragt."
+echo "   Einfach per AirDrop, iCloud oder E-Mail teilen."
+echo "   Empfänger: DMG öffnen → App in Programme ziehen → starten."
+echo "   Beim ersten Start wird einmalig der kostenlose Groq API Key abgefragt."
+echo "   Key erstellen: console.groq.com"
 echo ""
