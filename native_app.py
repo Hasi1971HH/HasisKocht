@@ -162,13 +162,13 @@ def build_html(data: dict) -> str:
         notiz = z.get("notiz", "")
         notiz_html = f'<span class="zutat-notiz">{notiz}</span>' if notiz else ""
         gruppen_html_parts.append(
-            f'<div class="zutat-row" data-name="{z.get("name","")}" '
-            f'data-menge="{z.get("menge",0)}" data-einheit="{z.get("einheit","")}">'
+            f'<label class="zutat-row">'
+            f'<input type="checkbox" class="zutat-check">'
             f'<span class="zutat-info"><span class="zutat-name">{z.get("name","")}</span>'
             f'{notiz_html}</span>'
             f'<span class="zutat-menge" data-base="{z.get("menge",0)}" '
             f'data-einheit="{z.get("einheit","")}">'
-            f'{z.get("menge",0)} {z.get("einheit","")}</span></div>'
+            f'{z.get("menge",0)} {z.get("einheit","")}</span></label>'
         )
     gruppen_html = "\n".join(gruppen_html_parts)
 
@@ -232,8 +232,18 @@ def build_html(data: dict) -> str:
   .gruppe-header {{ font-size: 13px; font-weight: 700; color: #6e6e73; text-transform: uppercase;
                     letter-spacing: .5px; padding: 18px 0 6px; }}
   .gruppe-header:first-child {{ padding-top: 0; }}
-  .zutat-row {{ display: flex; justify-content: space-between; align-items: flex-start;
-               padding: 10px 0; border-bottom: 1px solid #f0f0f5; font-size: 15px; }}
+  .zutat-row {{ display: flex; align-items: flex-start; gap: 12px;
+               padding: 10px 0; border-bottom: 1px solid #f0f0f5; font-size: 15px;
+               cursor: pointer; }}
+  .zutat-row .zutat-info {{ flex: 1; }}
+  .zutat-check {{ appearance: none; -webkit-appearance: none; width: 20px; height: 20px;
+                  border: 2px solid #d2d2d7; border-radius: 6px; cursor: pointer;
+                  flex-shrink: 0; margin-top: 1px; transition: all .15s; }}
+  .zutat-check:checked {{ background: #cc0000; border-color: #cc0000;
+                          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 12 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 5l3.5 3.5L11 1' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+                          background-repeat: no-repeat; background-position: center; background-size: 70%%; }}
+  .zutat-row:has(.zutat-check:checked) .zutat-name {{ text-decoration: line-through; color: #6e6e73; }}
+  .zutat-row:has(.zutat-check:checked) .zutat-menge {{ color: #6e6e73; }}
   .zutat-row:last-child {{ border-bottom: none; }}
   .zutat-info {{ display: flex; flex-direction: column; gap: 2px; }}
   .zutat-name {{ color: #1d1d1f; }}
